@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  .container-fluid
+    if messages.error
+      .alert.alert-danger(role='alert')
+        for error in messages.error
+          div= error.msg
+    if messages.success
+      .alert.alert-success(role='alert')
+        for success in messages.success
+          div= success.msg
+    if messages.info
+      .alert.alert-info(role='alert')
+        for info in messages.info
+          div= info.msg
+
+    div.center.quizzById
+          img.imgQuizz(src='../img/'+catg.img)
+          h1= catg.nom
+          label= catg.description
+          br
+
+    div.listQuizz
+            if quizz != undefined
+                if quizz.length != 0
+                  - each result in quizz
+                    div.quizz
+                      img(src='../img/'+result.attributes.img)
+                      h3= result.attributes.nom
+                      h6.desc= result.attributes.description
+
+                      form(method='GET', action='/quizz/'+result.attributes.id)
+                        input.btn.btn-primary(type='submit', value='Voir quizz')
+                else
+                  h6='Aucun resultats...'

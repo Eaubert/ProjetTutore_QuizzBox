@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+  .container
+    .panel
+      .panel-body
+        if messages.info
+          .alert.alert-info(role='alert')
+            for info in messages.info
+              div= info.msg
+
+        if messages.error
+          .alert.alert-danger(role='alert')
+            for error in messages.error
+              div= error.msg
+
+        form(method='POST')
+          legend Mot de passe oublié
+          .form-group
+            p Entrez votre adresse e-mail ci-dessous et nous vous enverrons les instructions de réinitialisation du mot de passe.
+            label(for='email') Email
+            input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus=true)
+          button.btn.btn-success(type='submit') réinitier

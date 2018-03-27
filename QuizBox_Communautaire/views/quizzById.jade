@@ -1,0 +1,101 @@
+extends layout
+
+block content
+  .container-fluid
+    if messages.error
+      .alert.alert-danger(role='alert')
+        for error in messages.error
+          div= error.msg
+    if messages.success
+      .alert.alert-success(role='alert')
+        for success in messages.success
+          div= success.msg
+    if messages.info
+      .alert.alert-info(role='alert')
+        for info in messages.info
+          div= info.msg
+
+    div.center.quizzById
+          img.imgQuizz(src='../img/'+quizz.img)
+          h1= quizz.nom
+          label= quizz.description
+          br
+          label='______________'
+          h3= 'Categorie'
+          h4=catg.nom
+          br
+
+
+    .row
+      div.listQuestion
+        div.question
+          - each result in tab
+              h5= result.attributes.question
+              label='__________________________'
+
+
+    h1.center.commentaire="Commentaires"
+
+    .row
+        - each result in comm
+
+          .listComm
+
+            label.commHead= result.attributes.pseudo
+            label.commDate= "le " + result.attributes.dateComm
+            .rating.note
+              - for (var i = 0; i < result.attributes.note; ++i)
+                    span.icon ★
+            label.commDesc=  result.attributes.commentaire
+
+
+
+
+    if user
+      div.center
+          br
+          br
+          label="______________________________________"
+
+      .row
+          .col-sm-2
+
+          .col-sm-8
+            form.form-horizontal.commentaire(method='POST' action="/uploadComm")
+              .form-group
+                label.col-sm-2(for='commentaire') Commenter :
+
+              .rating
+                          label
+                            input(type='radio', name='stars', value='1' required)
+                            span.icon ★
+                          label
+                            input(type='radio', name='stars', value='2')
+                            span.icon ★
+                            span.icon ★
+                          label
+                            input(type='radio', name='stars', value='3')
+                            span.icon ★
+                            span.icon ★
+                            span.icon ★
+                          label
+                            input(type='radio', name='stars', value='4')
+                            span.icon ★
+                            span.icon ★
+                            span.icon ★
+                            span.icon ★
+                          label
+                            input(type='radio', name='stars', value='5')
+                            span.icon ★
+                            span.icon ★
+                            span.icon ★
+                            span.icon ★
+                            span.icon ★
+              .form-group
+                input.form-control.commArea(type='text', name='commentaire', placeholder="Entrer votre commentaire...",  id='commentaire', required )
+                input.form-control(type='text', name='id_quizz', value=quizz.id ).invisible
+
+
+              .form-group.center
+                br
+                button.btn.btn-success(type='submit') Envoyer

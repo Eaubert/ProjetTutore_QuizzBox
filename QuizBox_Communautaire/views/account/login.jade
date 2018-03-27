@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+  .login-container.container
+    .panel
+      .panel-body
+        if messages.error
+          .alert.alert-danger(role='alert')
+            for error in messages.error
+              div= error.msg
+
+        form(method='POST')
+          legend Connexion
+          .form-group
+            label.control-label(for='email') Email
+            input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus=true)
+          .form-group
+            label.control-label(for='password') Mot de Passe
+            input.form-control(type='password', name='password', id='password', placeholder='Password')
+          .form-group
+            a(href='/forgot')
+              strong Mot de passe oublié ?
+          button.btn.btn-success(type='submit') Connexion
+
+        .hr-title
+          span ou
+
+        .btn-toolbar.text-center
+
+    p.text-center Vous avez pas de compte ?&nbsp;
+      a(href='/signup')
+        strong Inscription

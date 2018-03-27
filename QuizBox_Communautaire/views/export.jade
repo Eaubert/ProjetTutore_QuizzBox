@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  .container-fluid
+    if messages.error
+      .alert.alert-danger(role='alert')
+        for error in messages.error
+          div= error.msg
+    if messages.success
+      .alert.alert-success(role='alert')
+        for success in messages.success
+          div= success.msg
+    if messages.info
+      .alert.alert-info(role='alert')
+        for info in messages.info
+          div= info.msg
+
+    .row
+    fieldset
+      legend Veuillez sélectionner les Quiz à exportés :
+        form(method='POST', action='/extraction')
+          - each res in quiz
+            div
+              input(type='checkbox', name='quiz', value=res.attributes.nom)
+              label(for=res.attributes.nom)=res.attributes.nom
+          input.btn.btn-primary(type='submit', value='Confirmer')

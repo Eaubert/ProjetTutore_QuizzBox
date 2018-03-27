@@ -1,0 +1,51 @@
+extends layout
+
+block content
+  .container-fluid
+    if messages.error
+      .alert.alert-danger(role='alert')
+        for error in messages.error
+          div= error.msg
+    if messages.success
+      .alert.alert-success(role='alert')
+        for success in messages.success
+          div= success.msg
+    if messages.info
+      .alert.alert-info(role='alert')
+        for info in messages.info
+          div= info.msg
+
+    .row
+
+      div.listQuizz
+        .flex
+          h1="Top Quizz "
+          a(href='quizz') Voir tout
+
+        - each result in comm
+                div.quizz.index
+                  img(src='img/'+result.attributes.img)
+                  h3= result.attributes.nom
+                  h6= result.attributes.description
+                  .rating.note
+                    - for (var i = 0.5; i < result.attributes.moy; ++i)
+                          span.icon ★
+
+                  form(method='GET', action='/quizz/'+result.attributes.id).formIndex
+                    input.btn.btn-primary(type='submit', value='Voir quizz')
+
+    .row
+      div.listQuizz
+        br
+        .flex
+          h1="Categorie "
+          a(href='categorie') Voir tout
+
+        - each result in catg
+            div.quizz
+              img(src='img/'+result.attributes.img)
+              h3= result.attributes.nom
+              h6.desc= result.attributes.description
+
+              form(method='GET', action='/categorie/'+result.attributes.id)
+                input.btn.btn-primary(type='submit', value='Voir categorie')

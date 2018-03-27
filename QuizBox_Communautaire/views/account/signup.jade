@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+  .login-container.container
+    .panel
+      .panel-body
+        if messages.error
+          .alert.alert-danger(role='alert')
+            for error in messages.error
+              div= error.msg
+
+        form(method='POST')
+          legend Créer un compte
+          .form-group
+            label(for='name') Nom
+            input.form-control(type='text', name='name', id='name', placeholder='Name', autofocus=true)
+          .form-group
+            label(for='email') Email
+            input.form-control(type='email', name='email', id='email', placeholder='Email')
+          .form-group
+            label(for='password') Mot de passe
+            input.form-control(type='password', name='password', id='password', placeholder='Password')
+          button.btn.btn-success(type='submit') S'inscrire
+
+        .hr-title
+          span ou
+
+        .btn-toolbar.text-center
+
+    p.text-center Déjà un compte ?&nbsp;
+      a(href='/login')
+        strong Connexion
