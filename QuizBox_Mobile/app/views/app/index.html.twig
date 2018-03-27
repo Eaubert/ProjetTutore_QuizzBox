@@ -1,0 +1,37 @@
+{% extends "template/layout.html.twig" %}
+
+{% set title = 'Accueil' %}
+
+{% block script %}
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/public/assets/js/quizup.js"></script>
+{% endblock %}
+
+{% block content %}
+	<ul>
+		{% for room in rooms %}
+			<li>
+				<a href="#" id="room" quizup-data="{{ room.id }}">
+					{{ room.name }}
+					{% if room.pwd is not null %}
+						<i class="fa fa-lock" aria-hidden="true"></i>
+					{% else %}
+						<i class="fa fa-unlock" aria-hidden="true"></i>
+					{% endif %}
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
+
+	<hr />
+
+	<div id="password"></div>
+	<div id="ready"></div>
+	<div id="question">
+		<h2>Question :</h2>
+	</div>
+	<div id="answers">
+		<hr />
+		<h2>Answers :</h2>
+	</div>
+{% endblock %}
