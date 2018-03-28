@@ -201,7 +201,7 @@ exports.extration = function(req, res) {
     });
   }
 
-  var file ="C:/Users/alex/Downloads/QuizzBox" + '/Extraction';
+  var file ='/Extraction';
   res.download(file);
 
 
