@@ -87,7 +87,7 @@ exports.search =  function(req, res) {
      qb.where('nom', 'LIKE', search)/*.orWhere('description', 'LIKE', search)*/;
 
  }).fetchAll().then(function(tab) {
-   res.render('Quizz', {
+   res.render('quizz', {
      title: 'quizz',
      tab : tab.models
    });
@@ -101,7 +101,7 @@ exports.searchCatg =  function(req, res) {
      qb.where('nom', 'LIKE', search)/*.orWhere('description', 'LIKE', search)*/;
 
  }).fetchAll().then(function(tab) {
-   res.render('Categorie', {
+   res.render('categorie', {
      title: 'categorie',
      tab : tab.models
    });
@@ -110,7 +110,7 @@ exports.searchCatg =  function(req, res) {
 
 exports.quizz = function(req, res) {
    	Quizz.fetchAll().then(function(tab) {
-  		res.render('Quizz', {
+  		res.render('quizz', {
       	title: 'quizz',
   			tab : tab.models
   		});
@@ -120,7 +120,7 @@ exports.quizz = function(req, res) {
 
 exports.categorie = function(req, res) {
    	Categorie.fetchAll().then(function(tab) {
-  		res.render('Categorie', {
+  		res.render('categorie', {
       	title: 'categorie',
   			tab : tab.models
   		});
@@ -164,34 +164,45 @@ exports.export = function(req, res) {
 
 global.quiz='';
 global.ques='';
+global.m=0;
+global.n=0;
 exports.extration = function(req, res) {
   if(Array.isArray(req.body.quiz)==true){
     for( var i=0;i<req.body.quiz.length;i++){
       Quizz.where('nom','=',req.body.quiz[i]).query().select().then(function(t) {
-        global.quiz=global.quiz+JSON.stringify(t);
-
+        if(global.m==0){
+          global.quiz=global.quiz+JSON.stringify(t);
+          global.m+=1;
+        }else{
+          global.quiz=global.quiz+","+JSON.stringify(t);
+        }
         for(var j=0;j<t.length;j++){
           Question.where('id_quizz','=',t[j].id).query().select().then(function(ta) {
-            global.ques=global.ques+JSON.stringify(ta);
+            if(global.n==0){
+              global.ques=global.ques+JSON.stringify(ta);
+              global.n+=1;
+            }else{
+              global.ques=global.ques+","+JSON.stringify(ta);
+            }
           });
         }
-
       });
     }
-    fs.writeFileSync("Extraction",global.quiz+global.ques)
+    fs.writeFileSync("Extraction",'['+global.quiz+','+global.ques+']')
   }
   else{
     Quizz.where('nom','=',req.body.quiz).query().select().then(function(t) {
 
       Question.where('id_quizz','=',t[0].id).query().select().then(function(ta) {
-        fs.writeFileSync("Extraction",JSON.stringify(t)+JSON.stringify(ta))
+        var total=[t,ta]
+        fs.writeFileSync("Extraction",JSON.stringify(total))
       });
 
     });
   }
-  var file = './Extraction';
+
+  var file ="C:/Users/alex/Downloads/QuizzBox" + '/Extraction';
   res.download(file);
 
 
-  // JSON.parse(fs.writeFileSync("Extraction","contenu du fichier", "UTF-8"))
 };
