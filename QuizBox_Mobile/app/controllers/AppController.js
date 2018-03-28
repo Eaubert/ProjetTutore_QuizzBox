@@ -1,117 +1,81 @@
-let rooms = [
-	{ 
-		id: '881baf7c-0221-11e8-ba89-0ed5f89f718b',
-		name: 'Channel 1',
-		pwd: '123',
-		capacity: 4,
-		clients: []
-	},
-	{ 
-		id: '915aa431-802f-434a-991c-65f7ddbb9f9c',
-		name: 'Channel 2',
-		pwd: null,
-		capacity: 2,
-		clients: []
-	},
-]
+const RoomModel = require('../models/Room')
+const ScoreModel = require('../models/Score')
+const QuestionModel = require('../models/Question')
+const QuizzBoxConfig = require('../config/quizzbox')
 
-let question = {
-	id: '881baf7c-11e8-ba89-0221-0ed5f89f718b',
-	question: "De quelle couleur est le cheval blanc d'Henri IV ?",
-	answers: [
-		{
-			id: '915aa431-434a-802f-991c-65f7ddbb9f9c',
-			answer: 'Noir'
-		},
-		{
-			id: '915aa431-802f-991c-434a-65f7ddbb9f9c',
-			answer: 'Blanc'
-		},
-		{
-			id: '915aa431-434a-991c-802f-65f7ddbb9f9c',
-			answer: 'Marron'
+let bcrypt = require('bcrypt')
+
+exports.enterInRoom = (socket, roomId) => {
+	RoomModel.getById(roomId, (e, room) => {
+		if (room != undefined) {
+			if (room.mdp.length > 0) {
+				// On demande le mot de passe si il y en a un
+				socket.emit('passwordNeeded', roomId)
+			} else {
+				redirectToRoom(socket, room)
+			}
+		} else {
+			roomDoesNotExist(socket)
 		}
-	]
+	})
 }
 
-let clients = []
-
-exports.getHome = (req, res) => {
-	res.render('app/index.html.twig', { rooms })
+exports.checkPassword = (socket, data) => {
+	RoomModel.getById(data.roomId, (e, room) => {
+		if (room != undefined) {
+			// Comparaison des mots de passe
+			let equals = bcrypt.compareSync(data.password, room.mdp)
+			if (!equals) {
+				// On redemande le mot de passe au client
+				socket.emit('passwordNeededAfterFail', 'Le mot de passe est incorrect.')
+				socket.emit('passwordNeeded', data.roomId)
+			} else {
+				redirectToRoom(socket, room)
+			}
+		} else {
+			roomDoesNotExist(socket)
+		}
+	})
 }
 
-exports.getChannel = (channel_id) => {
-	return rooms.filter((channel) => {
-		return (channel.id == channel_id)
-	})[0]
-}
-
-exports.getClient = (client_id) => {
-	return clients.filter((c) => {
-		return (c.client_id = client_id)
-	})[0]
-}
-
-exports.removeClient = (channel, client_id) => {
-	// Parcourt de la liste des clients
-	clients.forEach((v, k) => {
-
-		// Si le client est trouvé
-		if (v.client_id == client_id) {
-			
-			// Suppression du client dans la liste
-			clients.splice(k, 1)
-
-			// Parcourt de la liste des clients du channel
-			channel.clients.forEach((v, k) => {
+exports.ready = (socket, roomId, io) => {
+	RoomModel.getById(roomId, (e, room) => {
+		if (room != undefined) {		
+			if (room.joueurs_pret < room.capacite) {
 				
-				// Si le client est trouvé
-				if (v.client_id == client_id) {
+				socket.join(roomId)
 
-					// Suppression du client dans la liste du channel
-					channel.clients.splice(k, 1)
-				}
-			})
+				RoomModel.updateJoueurPret(roomId, (e, row) => {
+					room.joueurs_pret = (room.joueurs_pret + 1)
+					if (room.joueurs_pret >= room.capacite) {
+						QuestionModel.getQuestionsByQuizzId(room.id_quizz, (e, questions) => {
+							let gameConfig = QuizzBoxConfig.gameVars()
+							gameConfig.questions = questions
+							gameConfig.id_quizz = room.id_quizz
+
+							io.to(roomId).emit('questions', gameConfig)
+						})
+					} else {
+						io.to(roomId).emit('playersReady', room.joueurs_pret)
+					}
+				})
+			} 
+		} else {
+			roomDoesNotExist(socket)
 		}
 	})
 }
 
-exports.addClient = (socket, channel) => {
-	// Ajouts du client dans une liste de tous les clients
-	clients.push({ 
-		client_id: socket.client.id, 
-		channel_id: channel.id 
+exports.storeScore = (socket, data) => {
+	ScoreModel.storeScore(data, (e, row) => {
+		socket.emit('goToScores', `/quizz/scores/${data.id_quizz}`)
 	})
-
-	// Ajouts du client dans la liste des clients du channel
-	channel.clients.push({ 
-		client_id: socket.client.id, 
-		socket, 
-		status: 'WAITING'
-	})
-
-	console.log(`Client enter in channel : ${channel.name}`)
 }
 
-exports.getClientByChannel = (channel, client_id) => {
-	return channel.clients.filter((c) => {
-		return (c.client_id == client_id)
-	})[0]
+redirectToRoom = (socket, room) => {
+	socket.emit('redirectToRoom', `/room/${room.id}`)
 }
 
-exports.clientsAreReady = (channel) => {
-	let ready = 0
-	let totalClients = Object.keys(channel.clients).length
-	channel.clients.forEach((v, k) => {
-		if (v.status === 'READY') {
-			ready = (ready + 1)
-		}
-	})
-	return (ready == totalClients)
-}
-
-exports.sendQuestion = (clients) => {
-	clients.forEach((v, k) => {
-		v.socket.emit('question', question)
-	})
+roomDoesNotExist = (socket) => {
+	socket.emit('roomDoesNotExist', 'La salle n\'existe pas.')
 }

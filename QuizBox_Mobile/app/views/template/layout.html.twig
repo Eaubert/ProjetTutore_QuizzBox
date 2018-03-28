@@ -1,15 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>QuizUp {% if title %} - {{ title }}{% endif %}</title>
+	<title>QuizzBox {% if title %} - {{ title }}{% endif %}</title>
+	<link rel="stylesheet" type="text/css" href="/public/assets/materialize/css/materialize.min.css">
 	<link rel="stylesheet" type="text/css" href="/public/assets/font-awesome-4.7.0/css/font-awesome.min.css">
+	{% block style %}{% endblock %}
+
 	<script src="/public/assets/js/jquery/jquery-3.3.1.min.js"></script>
+	<script src="/public/assets/materialize/js/materialize.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/public/assets/js/quizzbox.js"></script>
+	{% block script %}{% endblock %}
 </head>
 <body>
 
-	{% block content %}{% endblock %}
+	{% include 'template/elements/navbar.html.twig' %}
 
-	{% block script %}{% endblock %}
+	<div class="container">
+		<div class="section">
+			{% block content %}{% endblock %}
+		</div>
+	</div>
 
 </body>
 </html>

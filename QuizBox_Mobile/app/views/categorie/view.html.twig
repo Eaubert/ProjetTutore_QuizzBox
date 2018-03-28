@@ -1,0 +1,42 @@
+{% extends "template/layout.html.twig" %}
+
+{% set title = categorie.nom %}
+
+{% block script %}
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/public/assets/js/quizup.js"></script>
+{% endblock %}
+
+{% block content %}
+	
+	<div class="row">
+		<h1>{{ categorie.nom }}</h1>
+		<div class="divider"></div>
+		{% if quizz %}
+			{% for q in quizz %}
+				<div class="col s12 m4">
+					<div class="card vertical">
+						<div class="card-image">
+							<center>
+								<img src="/public/assets/img/{{ q.img }}" style="width: 80%">
+							</center>
+						</div>
+						<div class="card-stacked">
+							<div class="card-content">
+								<p>{{ q.description }}</p>
+							</div>
+							<div class="card-action">
+								<a href="/quizz/{{ q.id }}">Entrer</a>
+								<a href="/quizz/scores/{{ q.id }}">Scores</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		{% else %}
+			<div class="card-panel blue white-text">
+				Il n'y a visiblement aucun quizz.
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

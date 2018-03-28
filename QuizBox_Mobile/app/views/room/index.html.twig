@@ -1,0 +1,71 @@
+{% extends "template/layout.html.twig" %}
+
+{% set title = quizz.nom %}
+
+{% block content %}
+	<div class="row">
+		{% include '../template/elements/alerts.html.twig' %}
+		
+		<h1>
+			{{ quizz.nom }}
+			<a href="/room/create/{{ quizz.id }}" class="waves-effect waves-light btn right createRoom">Créer une salle</a>
+		</h1>
+		<div class="divider"></div>
+		{% if rooms %}
+			<table class="bordered centered striped highlight">
+				<thead>
+					<tr>
+						<th>Salle</th>
+						<th>Joueurs</th>
+						<th>Mot de passe </th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for room in rooms %}
+						<tr>
+							<td>{{ room.nom }}</td>
+							<td>{{ room.joueurs }} / {{ room.capacite }}</td>
+							<td>
+								{% if room.mdp %}
+									<i class="fa fa-lock"></i>
+								{% else %}
+									<i class="fa fa-unlock-alt"></i>
+							    {% endif %}
+							</td>
+							<td>
+								<a href="#" id="enterInRoom" class="waves-effect waves-light btn" quizzbox-data="{{ room.id }}">Rejoindre la partie</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<div class="card-panel blue">
+				<a href="/room/create/{{ quizz.id }}" class="white-text">Il n'y a visiblement aucune salle, pouquoi ne pas en créer une ?</a>
+			</div>
+		{% endif %}
+	</div>
+
+	<div id="modalPwd" class="modal">
+		<div class="modal-content">
+			<h4>Mot de passe requis</h4>
+			<span id="pwdFail"></span>
+			<div class="input-field">
+				<input id="mdp" type="password" class="validate" required="">
+				<label for="mdp">Mot de passe</label>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="#" id="sendPassword" class="modal-action modal-close waves-effect waves-green btn-flat">Envoyer</a>
+		</div>
+	</div>
+{% endblock %}
+
+{% block style %}
+    <style>
+    .createRoom {
+    	margin-top: 20px;
+	}
+	</style>
+{% endblock %}

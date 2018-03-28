@@ -1,0 +1,38 @@
+{% extends "template/layout.html.twig" %}
+
+{% set title = quizz.nom ~ ' - Scores' %}
+
+{% block script %}
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/public/assets/js/quizup.js"></script>
+{% endblock %}
+
+{% block content %}
+	
+	<div class="row">
+		<h1>{{ quizz.nom }} - Scores</h1>
+		<div class="divider"></div>
+		{% if scores %}
+			<table class="bordered striped highlight centered">
+				<thead>
+					<tr>
+						<th>Pseudonyme</th>
+						<th>Score</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for score in scores %}
+					    <tr>
+					    	<td>{{ score.pseudo }}</td>
+					    	<td>{{ score.score }}</td>
+					    </tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<div class="card-panel blue white-text">
+				Il n'y a visiblement aucun score.
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% if success %}
+	<div class="card-panel green white-text">
+		{{ success[0].msg }}
+	</div>
+{% endif %}
+
+{% if error %}
+	<div class="card-panel red white-text">
+		{{ error[0].msg }}
+	</div>
+{% endif %}

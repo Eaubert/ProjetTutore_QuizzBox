@@ -1,0 +1,51 @@
+{% extends "template/layout.html.twig" %}
+
+{% set title = quizz.nom %}
+
+{% block content %}
+	<div class="row">
+		<h1>
+			{{ quizz.nom }}
+		</h1>
+		<div class="divider"></div>
+		<div id="waiting">
+			<div class="card-panel blue white-text">
+				Attente des autres joueurs (<span id="playersReady">{{ room.joueurs_pret }}</span> / {{ room.capacite }})
+			</div>
+			<a href="#" id="ready" quizzbox-data="{{ room.id }}" class="waves-effect waves-light btn white-text">Je suis prêt !</a>
+		</div>
+
+		<div id="game">
+			<div class="card-panel blue-text text-darken-2">
+				<center>
+					<span id="question"></span>
+				</center>
+			</div>
+			<p class="right">Temps restant : <span class="badge" data-badge-caption="s" id="timeLeft">0</span></p>
+			<p class="left">Score : <span class="badge" data-badge-caption="pts" id="score">0</span></p>
+			<div class="col s12">
+				<center>
+					<span id="answers"></span>
+				</center>
+			</div>
+		</div>
+
+		<div id="endGame">
+			<div class="card-panel green white-text">
+				Vous avez un score de <strong><span id="endScore"></span></strong> pts
+			</div>
+			<div class="input-field">
+				<input id="pseudo" name="pseudo" type="text" class="validate" required>
+				<label for="pseudo">Pseudonyme</label>
+			</div>
+			<a href="#" id="sendScore" class="waves-effect waves-light btn col s12">Envoyer mon score</a>
+		</div>
+	</div>
+{% endblock %}
+
+{% block style %}
+    <style>
+    	#game, #endGame { display: none; }
+    	.btn { margin: 5px 5px 5px 5px; }
+    </style>
+{% endblock %}

@@ -2,9 +2,9 @@
   "name": "ptut",
   "version": "1.0.0",
   "description": "Projet Tutore LP CISIIE",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "keywords": [
     "socket.io",
@@ -14,9 +14,19 @@
   "author": "WILMOUTH Steven",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.6.0",
+    "bcrypt": "^1.0.3",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
+    "connect-flash": "^0.1.1",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "mysql": "^2.15.0",
     "socket.io": "^2.0.4",
-    "twig": "^1.10.5"
+    "twig": "^1.10.5",
+    "url": "^0.11.0",
+    "validator": "^9.4.1",
+    "xss": "^0.3.7"
   },
   "devDependencies": {
     "nodemon": "^1.12.1"

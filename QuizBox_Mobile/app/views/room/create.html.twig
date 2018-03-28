@@ -1,0 +1,42 @@
+{% extends "template/layout.html.twig" %}
+
+{% set title = 'Créer une salle' %}
+
+{% block content %}
+	<div class="row">
+		{% include '../template/elements/alerts.html.twig' %}
+
+		<h1>Créer une salle</h1>
+		<div class="divider"></div>
+		<form action="/room/store/{{ id_quizz }}" method="POST" class="col s12">
+			<div class="row">
+				<div class="input-field col s4">
+					<input id="nom" name="nom" value="{{ query.nom }}" type="text" class="validate" required>
+					<label for="nom">Nom de la salle</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="capacite" name="capacite" {% if query is defined %}value="{{ query.capacite }}"{% endif %} value="1" type="number" min="1" class="validate" required>
+					<label for="capacite">Nombre de joueurs</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="mdp" name="mdp" value="{{ query.mdp }}" type="password" class="validate">
+					<small class="letEmpty">(laisser vide si pas de mot de passe)</small>
+					<label for="mdp">Mot de passe</label>
+				</div>
+			</div>
+			<div class="row">
+				<input type="submit" class="btn col s12" value="Créer la salle">
+			</div>
+		</form>
+	</div>
+{% endblock %}
+
+{% block style %}
+	<style>
+	.letEmpty {
+		display: block;
+		margin-top: -18px;
+		color: grey;
+	}
+	</style>
+{% endblock %}
